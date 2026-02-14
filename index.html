@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ujian Penegak</title>
+<style>
+body{
+  font-family: 'Segoe UI', sans-serif;
+  background: linear-gradient(135deg,#1d3557,#457b9d);
+  margin:0;
+  padding:0;
+  display:flex;
+  justify-content:center;
+}
+.container{
+  background:white;
+  width:95%;
+  max-width:700px;
+  margin:20px;
+  padding:20px;
+  border-radius:15px;
+  box-shadow:0 10px 25px rgba(0,0,0,0.3);
+}
+h1{
+  text-align:center;
+  color:#1d3557;
+}
+.question{
+  font-weight:bold;
+  margin-bottom:10px;
+}
+.options button{
+  display:block;
+  width:100%;
+  padding:10px;
+  margin:5px 0;
+  border:none;
+  border-radius:8px;
+  cursor:pointer;
+  background:#f1f1f1;
+  transition:0.3s;
+}
+.options button:hover{
+  background:#457b9d;
+  color:white;
+}
+.progress{
+  height:10px;
+  background:#ddd;
+  border-radius:10px;
+  margin:15px 0;
+}
+.progress-bar{
+  height:10px;
+  width:0%;
+  background:#2a9d8f;
+  border-radius:10px;
+  transition:0.3s;
+}
+.result{
+  text-align:center;
+  font-size:18px;
+  font-weight:bold;
+}
+.link-box{
+  display:none;
+  margin-top:15px;
+  text-align:center;
+}
+.link-box a{
+  display:inline-block;
+  padding:10px 15px;
+  background:#e63946;
+  color:white;
+  text-decoration:none;
+  border-radius:8px;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+<h1>Ujian Penegak 🔥</h1>
+
+<div class="progress">
+  <div class="progress-bar" id="progressBar"></div>
+</div>
+
+<div id="quiz"></div>
+<div class="result" id="result"></div>
+
+<div class="link-box" id="linkBox">
+  🎉 Selamat! Kamu LULUS 🎉<br><br>
+  <a href="https://maps.app.goo.gl/Rz8k7opmnaZUNMof7" target="_blank">Buka Lokasi Rahasia</a>
+</div>
+
+</div>
+
+<script>
+
+const questions = [
+{q:"Perkemahan pertama tahun 1907 dilakukan di?",o:["London","Brownsea Island","Oxford","Manchester"],a:1},
+{q:"Pendiri kepanduan dunia adalah?",o:["John Thurman","Baden Powell","William Smith","Ernest Thompson"],a:1},
+{q:"Buku dasar kepanduan dunia adalah?",o:["Rovering to Success","Scouting for Boys","Aids to Scouting","Jungle Book"],a:1},
+{q:"Organisasi dunia untuk putra?",o:["WAGGGS","WOSM","UNESCO","WHO"],a:1},
+{q:"Kepanduan masuk Indonesia sekitar tahun?",o:["1908","1912","1928","1945"],a:1},
+{q:"Gerakan Pramuka resmi berdiri tanggal?",o:["20 Mei 1908","14 Agustus 1961","28 Oktober 1928","17 Agustus 1945"],a:1},
+{q:"AD Pramuka ditetapkan melalui?",o:["UU 12/2010","Keppres 238/1961","TAP MPR","PP 45/1960"],a:1},
+{q:"Metode kepramukaan menekankan?",o:["Ceramah","Learning by Doing","Hukuman","Kompetisi"],a:1},
+{q:"Rukun Iman berjumlah?",o:["4","5","6","7"],a:2},
+{q:"Keutamaan sholat berjamaah?",o:["10","17","27","40"],a:2},
+{q:"Urutan pertama tajhizul jenazah?",o:["Mengkafani","Menshalatkan","Memandikan","Menguburkan"],a:2},
+{q:"Sila ke-3 Pancasila?",o:["Ketuhanan","Persatuan Indonesia","Kerakyatan","Keadilan"],a:1},
+{q:"Sekretariat ASEAN berada di?",o:["Bangkok","Jakarta","Manila","Kuala Lumpur"],a:1},
+{q:"Markas PBB berada di?",o:["Paris","New York","Den Haag","Jenewa"],a:1},
+{q:"Kompas bekerja berdasarkan?",o:["Gravitasi","Magnet bumi","Tekanan udara","Gelombang radio"],a:1},
+{q:"Simpul menyambung dua tali berbeda ukuran?",o:["Simpul mati","Simpul anyam","Simpul jangkar","Simpul tiang"],a:1},
+{q:"Penyakit degeneratif?",o:["Flu","Diabetes","Malaria","Campak"],a:1},
+{q:"Renang gaya bebas disebut?",o:["Butterfly","Crawl","Backstroke","Breaststroke"],a:1},
+{q:"Tujuan kewirausahaan?",o:["Jabatan","Peluang usaha","Pujian","Menghindari risiko"],a:1},
+{q:"Undang-Undang Pramuka?",o:["UU 12/2010","UU 20/2003","UU 23/2002","UU 5/1990"],a:0},
+{q:"Hari Pramuka?",o:["17 Agustus","14 Agustus","28 Oktober","20 Mei"],a:1},
+{q:"Golongan Ambalan?",o:["Siaga","Penggalang","Penegak","Pandega"],a:2},
+{q:"Satuan terkecil Penegak?",o:["Regu","Sangga","Reka","Ambalan"],a:1},
+{q:"Prinsip dasar berlandaskan?",o:["Kapitalisme","Pancasila","Liberalisme","Sosialisme"],a:1},
+{q:"World Jamboree tiap?",o:["2 th","3 th","4 th","5 th"],a:2}
+];
+
+let current=0;
+let score=0;
+
+function loadQuestion(){
+  if(current>=questions.length){
+    document.getElementById("quiz").innerHTML="";
+    document.getElementById("result").innerHTML="Skor kamu: "+score+" / "+questions.length;
+    if(score>=25){
+      document.getElementById("linkBox").style.display="block";
+    }else{
+      document.getElementById("result").innerHTML+="<br>Belum mencapai 25 benar.";
+    }
+    return;
+  }
+
+  let q=questions[current];
+  let html="<div class='question'>"+(current+1)+". "+q.q+"</div><div class='options'>";
+  q.o.forEach((opt,i)=>{
+    html+="<button onclick='answer("+i+")'>"+opt+"</button>";
+  });
+  html+="</div>";
+  document.getElementById("quiz").innerHTML=html;
+  document.getElementById("progressBar").style.width=((current/questions.length)*100)+"%";
+}
+
+function answer(i){
+  if(i===questions[current].a){score++;}
+  current++;
+  loadQuestion();
+}
+
+loadQuestion();
+
+</script>
+
+</body>
+</html>
