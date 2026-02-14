@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ujian Penegak</title>
+<style>
+body{
+  font-family: 'Segoe UI', sans-serif;
+  background: linear-gradient(135deg,#3a5a40,#344e41);
+  margin:0;
+  display:flex;
+  justify-content:center;
+}
+.container{
+  background:white;
+  width:95%;
+  max-width:750px;
+  margin:20px;
+  padding:25px;
+  border-radius:15px;
+  box-shadow:0 15px 30px rgba(0,0,0,0.3);
+}
+h1{text-align:center;color:#344e41;}
+.question{font-weight:bold;margin-bottom:10px;}
+.options button{
+  width:100%;
+  padding:10px;
+  margin:6px 0;
+  border:none;
+  border-radius:8px;
+  cursor:pointer;
+  background:#dad7cd;
+  transition:0.3s;
+}
+.options button:hover{
+  background:#588157;
+  color:white;
+}
+.progress{
+  height:10px;
+  background:#ddd;
+  border-radius:10px;
+  margin:15px 0;
+}
+.progress-bar{
+  height:10px;
+  width:0%;
+  background:#588157;
+  border-radius:10px;
+  transition:0.3s;
+}
+.result{text-align:center;font-size:18px;font-weight:bold;}
+.link-box{display:none;text-align:center;margin-top:15px;}
+.link-box a{
+  background:#bc6c25;
+  color:white;
+  padding:10px 15px;
+  text-decoration:none;
+  border-radius:8px;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+<h1>Ujian Penegak 🔥</h1>
+
+<div class="progress">
+  <div class="progress-bar" id="progressBar"></div>
+</div>
+
+<div id="quiz"></div>
+<div class="result" id="result"></div>
+
+<div class="link-box" id="linkBox">
+🎉 Selamat! Kamu LULUS 🎉<br><br>
+<a href="https://maps.app.goo.gl/Rz8k7opmnaZUNMof7" target="_blank">
+Buka Lokasi Rahasia
+</a>
+</div>
+
+</div>
+
+<script>
+
+const questions = [
+{q:"Perkemahan pertama 1907 di?",o:["London","Brownsea Island","Oxford","Manchester"],a:1},
+{q:"Pendiri kepanduan dunia?",o:["John Thurman","Baden Powell","William Smith","Ernest Thompson"],a:1},
+{q:"Buku dasar kepanduan?",o:["Rovering to Success","Scouting for Boys","Aids to Scouting","Jungle Book"],a:1},
+{q:"Organisasi dunia putra?",o:["WAGGGS","WOSM","UNESCO","WHO"],a:1},
+{q:"Organisasi dunia putri?",o:["WOSM","WAGGGS","WHO","ILO"],a:1},
+{q:"Kepanduan masuk Indonesia?",o:["1908","1912","1928","1945"],a:1},
+{q:"Gerakan Pramuka berdiri?",o:["20 Mei 1908","14 Agustus 1961","28 Oktober 1928","17 Agustus 1945"],a:1},
+{q:"Keppres Pramuka?",o:["238/1961","45/1960","12/2010","20/2003"],a:0},
+{q:"Metode utama?",o:["Ceramah","Learning by Doing","Hukuman","Kompetisi"],a:1},
+{q:"Rukun Iman?",o:["4","5","6","7"],a:2},
+{q:"Sholat berjamaah?",o:["10","17","27","40"],a:2},
+{q:"Tajhizul jenazah pertama?",o:["Mengkafani","Menshalatkan","Memandikan","Menguburkan"],a:2},
+{q:"Sila ke-3?",o:["Ketuhanan","Persatuan Indonesia","Kerakyatan","Keadilan"],a:1},
+{q:"Sekretariat ASEAN?",o:["Bangkok","Jakarta","Manila","KL"],a:1},
+{q:"Markas PBB?",o:["Paris","New York","Den Haag","Jenewa"],a:1},
+{q:"Kompas berdasarkan?",o:["Gravitasi","Magnet bumi","Tekanan udara","Gelombang"],a:1},
+{q:"Simpul beda ukuran?",o:["Mati","Anyam","Jangkar","Tiang"],a:1},
+{q:"Penyakit degeneratif?",o:["Flu","Diabetes","Malaria","Campak"],a:1},
+{q:"Renang bebas?",o:["Butterfly","Crawl","Backstroke","Breaststroke"],a:1},
+{q:"UU Pramuka?",o:["12/2010","20/2003","23/2002","5/1990"],a:0},
+{q:"Hari Pramuka?",o:["17 Ags","14 Ags","28 Okt","20 Mei"],a:1},
+{q:"Golongan Ambalan?",o:["Siaga","Penggalang","Penegak","Pandega"],a:2},
+{q:"Satuan terkecil?",o:["Regu","Sangga","Reka","Ambalan"],a:1},
+{q:"Dasar negara?",o:["Kapitalisme","Pancasila","Liberalisme","Sosialisme"],a:1},
+{q:"World Jamboree?",o:["2 th","3 th","4 th","5 th"],a:2},
+{q:"Tujuan Pramuka?",o:["Militer","Karakter","Politik","Bisnis"],a:1},
+{q:"Ikatan sejajar?",o:["Palang","Silang","Canggah","Kaki tiga"],a:0},
+{q:"Puasa selang-seling?",o:["Arafah","Syawal","Daud","Nazar"],a:2},
+{q:"Hadits niat diriwayatkan?",o:["Abu Hurairah","Umar","Ibnu Umar","Anas"],a:1},
+{q:"Prinsip dasar?",o:["Politik","Tuhan-Sesama-Diri","Bisnis","Militer"],a:1},
+{q:"Tahun Scouting for Boys?",o:["1905","1907","1908","1910"],a:2},
+{q:"Lambang Pramuka?",o:["Bintang","Tunas kelapa","Garuda","Kompas"],a:1},
+{q:"Fungsi tanda jejak?",o:["Hiasan","Navigasi","Upacara","Permainan"],a:1},
+{q:"Contoh sila ke-5?",o:["Gotong royong","Adil","Musyawarah","Ibadah"],a:1},
+{q:"Kewirausahaan?",o:["Jabatan","Peluang usaha","Pujian","Risiko"],a:1},
+{q:"Di masa Jepang?",o:["Bebas","Dibubarkan","Militer","Partai"],a:1},
+{q:"Ambalan untuk?",o:["Siaga","Penggalang","Penegak","Pandega"],a:2},
+{q:"Penyakit perilaku tidak sehat?",o:["Hipertensi","Malaria","Campak","DBD"],a:0},
+{q:"Renang termasuk?",o:["Olahraga air","Darat","Tim","Indoor"],a:0},
+{q:"Jumlah gerakan PBB minimal?",o:["5","10","15","20"],a:2},
+{q:"Setelah BP wafat?",o:["WOSM","PBB","Inggris","UNESCO"],a:0},
+{q:"Perang latar belakang?",o:["Dunia I","Boer","Vietnam","Krimea"],a:1},
+{q:"Sangga bagian dari?",o:["Ambalan","Regu","Reka","Gudep"],a:0},
+{q:"WAGGGS untuk?",o:["Putra","Putri","Dewasa","Pandega"],a:1},
+{q:"Prinsip dasar Indonesia?",o:["Pancasila","Liberalisme","Sosialisme","Kapitalisme"],a:0}
+];
+
+let current=0;
+let score=0;
+
+function shuffle(array){
+  for(let i=array.length-1;i>0;i--){
+    let j=Math.floor(Math.random()*(i+1));
+    [array[i],array[j]]=[array[j],array[i]];
+  }
+}
+shuffle(questions);
+
+function loadQuestion(){
+  if(current>=questions.length){
+    document.getElementById("quiz").innerHTML="";
+    document.getElementById("result").innerHTML=
+    "Skor kamu: "+score+" / "+questions.length;
+    if(score>=25){
+      document.getElementById("linkBox").style.display="block";
+    }else{
+      document.getElementById("result").innerHTML+="<br><br>Belum mencapai 25 benar.";
+    }
+    return;
+  }
+
+  let q=questions[current];
+  let options=[...q.o];
+  let correct=q.o[q.a];
+  shuffle(options);
+
+  let html="<div class='question'>"+(current+1)+". "+q.q+"</div><div class='options'>";
+  options.forEach(opt=>{
+    html+="<button onclick='answer(\""+opt+"\")'>"+opt+"</button>";
+  });
+  html+="</div>";
+  document.getElementById("quiz").innerHTML=html;
+  document.getElementById("progressBar").style.width=
+  ((current/questions.length)*100)+"%";
+}
+
+function answer(selected){
+  if(selected===questions[current].o[questions[current].a]){
+    score++;
+  }
+  current++;
+  loadQuestion();
+}
+
+loadQuestion();
+
+</script>
+
+</body>
+  </html>
